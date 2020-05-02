@@ -12,14 +12,14 @@ class FusedGemm final : public Gemm<T> {
   FusedGemm(const OpKernelInfo& info) : Gemm<T>(info) {
     std::string activation = info.GetAttrOrDefault<std::string>("activation", "");
     NodeAttributes attrs;
-    for(const auto& p : info.node().GetAttributes()){
-        if(p.first.size() >= 12 && p.first.compare(0,11, "activation_") == 0){
-           attrs[p.first.substr(11)] = p.second;
-        }
+    for (const auto& p : info.node().GetAttributes()) {
+      if (p.first.size() >= 12 && p.first.compare(0, 11, "activation_") == 0) {
+        attrs[p.first.substr(11)] = p.second;
+      }
     }
     functors::ElementWiseRangedTransform<T>* p;
     ORT_THROW_IF_ERROR(functors::ElementWiseRangedTransform<float>::Create(activation, attrs, &p));
-    activation_.reset(p);
+    this->activation_.reset(p);
   }
 };
 

@@ -42,38 +42,40 @@ struct ElementWiseRangedTransform {
   virtual ~ElementWiseRangedTransform() = 0;
   static Status Create(const std::string& type, const onnxruntime::NodeAttributes& attributes,
                        ElementWiseRangedTransform<T>** out);
-  
 };
 
 template <typename T>
-ElementWiseRangedTransform<T>::~ElementWiseRangedTransform(){
-
+ElementWiseRangedTransform<T>::~ElementWiseRangedTransform() {
 }
-#define ORT_GET_ATTR_AND_RETURN(X)                             \
-  float X;                                                     \
-  Status Init(const onnxruntime::NodeAttributes& attributes) { \
-    return (GetFloatParam(#X, attributes, X));                 \
-  } \
-  ElementWiseRangedTransform<T>* Copy() const final{ \
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); \
+#define ORT_GET_ATTR_AND_RETURN(X)                                 \
+  float X;                                                         \
+  Status Init(const onnxruntime::NodeAttributes& attributes) {     \
+    return (GetFloatParam(#X, attributes, X));                     \
+  }                                                                \
+  ElementWiseRangedTransform<T>* Copy() const final {              \
+    using T1 = typename std::remove_pointer<decltype(this)>::type; \
+    using T2 = typename std::remove_const<T1>::type;               \
+    return new T2(*this);                                          \
   }
 
-#define ORT_GET_ATTR_AND_RETURN_2(X, Y)                        \
-  float X;                                                     \
-  float Y;                                                     \
-  Status Init(const onnxruntime::NodeAttributes& attributes) { \
-    ORT_RETURN_IF_ERROR(GetFloatParam(#X, attributes, X));     \
-    ORT_RETURN_IF_ERROR(GetFloatParam(#Y, attributes, Y));     \
-    return Status::OK();                                       \
-  }\
-  ElementWiseRangedTransform<T>* Copy() const final{ \
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); \
+#define ORT_GET_ATTR_AND_RETURN_2(X, Y)                            \
+  float X;                                                         \
+  float Y;                                                         \
+  Status Init(const onnxruntime::NodeAttributes& attributes) {     \
+    ORT_RETURN_IF_ERROR(GetFloatParam(#X, attributes, X));         \
+    ORT_RETURN_IF_ERROR(GetFloatParam(#Y, attributes, Y));         \
+    return Status::OK();                                           \
+  }                                                                \
+  ElementWiseRangedTransform<T>* Copy() const final {              \
+    using T1 = typename std::remove_pointer<decltype(this)>::type; \
+    using T2 = typename std::remove_const<T1>::type;               \
+    return new T2(*this);                                          \
   }
 
 template <typename T>
 struct Elu : public ElementWiseRangedTransform<T> {
   ORT_GET_ATTR_AND_RETURN(alpha);
-  
+
   float Cost() const final {
     return 30.f;
   }
@@ -124,8 +126,10 @@ struct Softplus : public ElementWiseRangedTransform<T> {
   Status Init(const onnxruntime::NodeAttributes&) {
     return Status::OK();
   }
-  ElementWiseRangedTransform<T>* Copy() const { 
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); 
+  ElementWiseRangedTransform<T>* Copy() const {
+    using T1 = typename std::remove_pointer<decltype(this)>::type;
+    using T2 = typename std::remove_const<T1>::type;
+    return new T2(*this);
   }
   float Cost() const final {
     return 15.0f;
@@ -144,8 +148,10 @@ struct Relu : public ElementWiseRangedTransform<T> {
   Status Init(const onnxruntime::NodeAttributes&) {
     return Status::OK();
   }
-  ElementWiseRangedTransform<T>* Copy() const { 
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); 
+  ElementWiseRangedTransform<T>* Copy() const {
+    using T1 = typename std::remove_pointer<decltype(this)>::type;
+    using T2 = typename std::remove_const<T1>::type;
+    return new T2(*this);
   }
   float Cost() const final {
     return 1.0f;
@@ -164,8 +170,10 @@ struct Sigmoid : public ElementWiseRangedTransform<T> {
   Status Init(const onnxruntime::NodeAttributes&) {
     return Status::OK();
   }
-  ElementWiseRangedTransform<T>* Copy() const { 
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); 
+  ElementWiseRangedTransform<T>* Copy() const {
+    using T1 = typename std::remove_pointer<decltype(this)>::type;
+    using T2 = typename std::remove_const<T1>::type;
+    return new T2(*this);
   }
   float Cost() const final {
     return 2.0f;
@@ -187,8 +195,10 @@ struct Softsign : public ElementWiseRangedTransform<T> {
   Status Init(const onnxruntime::NodeAttributes&) {
     return Status::OK();
   }
-  ElementWiseRangedTransform<T>* Copy() const { 
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); 
+  ElementWiseRangedTransform<T>* Copy() const {
+    using T1 = typename std::remove_pointer<decltype(this)>::type;
+    using T2 = typename std::remove_const<T1>::type;
+    return new T2(*this);
   }
   float Cost() const final {
     return 1.0f;
@@ -207,8 +217,10 @@ struct Tanh : public ElementWiseRangedTransform<T> {
   Status Init(const onnxruntime::NodeAttributes&) {
     return Status::OK();
   }
-  ElementWiseRangedTransform<T>* Copy() const { 
-    return new std::remove_const<std::remove_pointer<decltype(this)>::type>::type(*this); 
+  ElementWiseRangedTransform<T>* Copy() const {
+    using T1 = typename std::remove_pointer<decltype(this)>::type;
+    using T2 = typename std::remove_const<T1>::type;
+    return new T2(*this);
   }
 
   float Cost() const final {
@@ -319,12 +331,12 @@ DEFINE_ELE_KERNEL(Tanh, 9);
 DEFINE_ELE_KERNEL(ThresholdedRelu, 10);
 DEFINE_ELE_KERNEL(Selu, 11);
 
-#define CREATE_ELE_KERNEL(X)                         \
-  if (type == #X) {                                  \
-    functors::X<T>* p = new        functors::X<T>(); \
-    p->Init(attributes);                             \
-    *out = p;                                        \
-    return Status::OK();                             \
+#define CREATE_ELE_KERNEL(X)                  \
+  if (type == #X) {                           \
+    functors::X<T>* p = new functors::X<T>(); \
+    p->Init(attributes);                      \
+    *out = p;                                 \
+    return Status::OK();                      \
   }
 
 namespace functors {

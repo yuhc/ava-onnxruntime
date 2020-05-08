@@ -248,12 +248,14 @@ else()
       set_source_files_properties(${mlas_common_srcs} PROPERTIES COMPILE_FLAGS "-DMLAS_AVX512F_UNSUPPORTED")
     endif() # AVX512F_COMPILES
 
+    # disable avx512f/bw
+    set_source_files_properties(${mlas_common_srcs} PROPERTIES COMPILE_FLAGS "-DMLAS_AVX512F_UNSUPPORTED -DMLAS_AVX512BW_UNSUPPORTED")
     set(mlas_platform_srcs
       ${mlas_platform_srcs_sse2}
       ${mlas_platform_srcs_avx}
       ${mlas_platform_srcs_avx2}
-      ${mlas_platform_srcs_avx512f}
-      ${mlas_platform_srcs_avx512bw}
+      # ${mlas_platform_srcs_avx512f}
+      # ${mlas_platform_srcs_avx512bw}
     )
   endif()
 endif()

@@ -1,4 +1,4 @@
-av==8.0.1
+av==6.2.0
 blessings==1.7
 boto3==1.13.1
 botocore==1.16.1
@@ -15,7 +15,6 @@ kiwisolver==1.2.0
 matplotlib==3.2.1
 networkx==2.4
 numpy==1.18.3
-opencv-python==4.2.0.34
 Pillow==7.1.2
 pkg-resources==0.0.0
 protobuf==3.11.3
